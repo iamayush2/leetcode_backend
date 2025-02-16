@@ -31,9 +31,12 @@ const fetchLeetCodeStats = async (username) => {
 
   try {
     const response = await axios.post(LEETCODE_GRAPHQL_URL, query);
-    if (!response.data.data || !response.data.data.matchedUser) {
-      throw new Error("User not found or invalid response");
+
+    // Check if user exists
+    if (!response.data.data.matchedUser) {
+      throw new Error(`User ${username} not found.`);
     }
+
     const stats = response.data.data.matchedUser.submitStatsGlobal.acSubmissionNum;
     const easy = stats.find((s) => s.difficulty === "Easy")?.count || 0;
     const medium = stats.find((s) => s.difficulty === "Medium")?.count || 0;
@@ -47,20 +50,14 @@ const fetchLeetCodeStats = async (username) => {
   }
 };
 
-// Leaderboard API Route
+// ✅ API Route for Leaderboard
 app.get("/leaderboard", async (req, res) => {
-  try {
-    const leaderboard = await Promise.all(users.map(fetchLeetCodeStats));
-    leaderboard.sort((a, b) => b.points - a.points);
-    res.json(leaderboard);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch leaderboard data" });
-  }
+  const leaderboard = await Promise.all(users.map(fetchLeetCodeStats));
+  leaderboard.sort((a, b) => b.points - a.points);
+  res.json(leaderboard);
 });
 
-// Ensure the server starts when deployed
+// ✅ Make sure the server listens on a port
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-module.exports = app;
