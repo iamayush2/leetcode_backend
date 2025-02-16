@@ -9,7 +9,7 @@ app.use(cors());
 
 const LEETCODE_GRAPHQL_URL = "https://leetcode.com/graphql";
 
-const users = ["alice123", "bob_coder", "charlie_dev"];
+const users = ["WhoIsHigh"];
 
 const fetchLeetCodeStats = async (username) => {
   const query = {
