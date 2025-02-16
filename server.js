@@ -3,6 +3,8 @@ const axios = require("axios");
 const cors = require("cors");
 
 const app = express();
+const PORT = process.env.PORT || 5000;
+
 app.use(cors());
 
 const LEETCODE_GRAPHQL_URL = "https://leetcode.com/graphql";
@@ -45,6 +47,7 @@ const fetchLeetCodeStats = async (username) => {
   }
 };
 
+// Leaderboard API Route
 app.get("/leaderboard", async (req, res) => {
   try {
     const leaderboard = await Promise.all(users.map(fetchLeetCodeStats));
@@ -53,6 +56,11 @@ app.get("/leaderboard", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch leaderboard data" });
   }
+});
+
+// Ensure the server starts when deployed
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 module.exports = app;
